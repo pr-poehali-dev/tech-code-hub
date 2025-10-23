@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Source+Sans+Pro:wght@400;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,11 +6,11 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 213 27% 18%;
+    --background: 210 17% 93%;
+    --foreground: 210 11% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 213 27% 18%;
+    --card-foreground: 210 11% 18%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 213 27% 18%;
@@ -18,13 +18,13 @@
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 213 27% 18%;
+    --secondary: 210 11% 31%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 20% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 217 91% 60%;
+    --accent: 6 78% 57%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -32,25 +32,25 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --ring: 6 78% 57%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 213 27% 18%;
+    --sidebar-background: 210 11% 18%;
 
     --sidebar-foreground: 210 20% 98%;
 
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 6 78% 57%;
 
     --sidebar-primary-foreground: 0 0% 100%;
 
-    --sidebar-accent: 215 25% 27%;
+    --sidebar-accent: 210 11% 25%;
 
     --sidebar-accent-foreground: 210 20% 98%;
 
-    --sidebar-border: 215 25% 27%;
+    --sidebar-border: 210 11% 25%;
 
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 6 78% 57%;
   }
 
   .dark {
@@ -72,7 +72,7 @@
     --muted: 215 25% 27%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 217 91% 60%;
+    --accent: 6 78% 57%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 63% 31%;
@@ -80,15 +80,15 @@
 
     --border: 215 25% 27%;
     --input: 215 25% 27%;
-    --ring: 217 91% 60%;
-    --sidebar-background: 213 27% 18%;
+    --ring: 6 78% 57%;
+    --sidebar-background: 210 11% 18%;
     --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 6 78% 57%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 27%;
+    --sidebar-accent: 210 11% 25%;
     --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 215 25% 27%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 210 11% 25%;
+    --sidebar-ring: 6 78% 57%;
   }
 }
 
@@ -99,11 +99,21 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", sans-serif;
+    font-family: "Source Sans Pro", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Roboto Mono", monospace;
+    letter-spacing: -0.5px;
   }
 
   code,
   pre {
-    font-family: "Fira Code", monospace;
+    font-family: "Roboto Mono", monospace;
   }
 }

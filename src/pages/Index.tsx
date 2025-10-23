@@ -98,7 +98,7 @@ const search = debounce((query) => {
     },
     {
       title: "CSS custom properties",
-      content: "Используйте CSS переменные для темизации: --color-primary: #3F7AFC; Легко менять и переиспользовать.",
+      content: "Используйте CSS переменные для темизации: --color-primary: #E74C3C; Легко менять и переиспользовать.",
       icon: "Palette"
     },
     {
@@ -160,15 +160,15 @@ const search = debounce((query) => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      <main className="flex-1 p-8 lg:pr-80">
-        <header className="mb-12">
-          <h1 className="text-4xl font-bold mb-2 text-foreground">TECH PORTFOLIO</h1>
-          <p className="text-muted-foreground text-lg">PHP • JavaScript • CSS</p>
+    <div className="min-h-screen flex bg-background">
+      <main className="flex-1 p-6 lg:p-12 lg:pr-96">
+        <header className="mb-12 animate-fade-in">
+          <h1 className="text-5xl font-bold mb-3 text-foreground tracking-tight">TECH PORTFOLIO</h1>
+          <p className="text-muted-foreground text-xl font-semibold">PHP • JavaScript • CSS</p>
         </header>
 
         <Tabs defaultValue="code" className="w-full" onValueChange={setActiveSection}>
-          <TabsList className="mb-8">
+          <TabsList className="mb-8 bg-card border border-border">
             <TabsTrigger value="code" className="gap-2">
               <Icon name="Code2" size={18} />
               Код-сниппеты
@@ -187,16 +187,16 @@ const search = debounce((query) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="code" className="space-y-6">
+          <TabsContent value="code" className="space-y-6 animate-fade-in">
             {codeSnippets.map((snippet, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">{snippet.title}</h3>
-                    <div className="flex gap-2">
-                      <Badge variant="secondary">{snippet.language}</Badge>
+                    <h3 className="text-2xl font-bold mb-3 text-foreground">{snippet.title}</h3>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="secondary" className="text-sm px-3 py-1">{snippet.language}</Badge>
                       {snippet.tags.map((tag, i) => (
-                        <Badge key={i} variant="outline">{tag}</Badge>
+                        <Badge key={i} variant="outline" className="text-sm px-3 py-1">{tag}</Badge>
                       ))}
                     </div>
                   </div>
@@ -204,55 +204,58 @@ const search = debounce((query) => {
                     size="sm"
                     variant="outline"
                     onClick={() => copyToClipboard(snippet.code, snippet.title)}
-                    className="gap-2"
+                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
                   >
                     <Icon name="Copy" size={16} />
                     Copy
                   </Button>
                 </div>
-                <pre className="bg-secondary text-secondary-foreground p-4 rounded-lg overflow-x-auto">
-                  <code>{snippet.code}</code>
-                </pre>
+                <div className="bg-secondary/10 border-2 border-secondary/20 rounded-lg p-5 overflow-x-auto">
+                  <pre className="text-sm">
+                    <code className="text-foreground">{snippet.code}</code>
+                  </pre>
+                </div>
               </Card>
             ))}
           </TabsContent>
 
-          <TabsContent value="tips" className="space-y-4">
+          <TabsContent value="tips" className="space-y-5 animate-fade-in">
             {tips.map((tip, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="flex gap-4">
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex gap-5">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon name={tip.icon as any} size={24} className="text-primary" />
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                      <Icon name={tip.icon as any} size={28} className="text-primary" />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{tip.title}</h3>
-                    <p className="text-muted-foreground">{tip.content}</p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-2 text-foreground">{tip.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-base">{tip.content}</p>
                   </div>
                 </div>
               </Card>
             ))}
           </TabsContent>
 
-          <TabsContent value="links" className="space-y-4">
+          <TabsContent value="links" className="space-y-5 animate-fade-in">
             {links.map((link, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Icon name="ExternalLink" size={20} className="text-primary" />
-                      <h3 className="text-lg font-semibold">{link.title}</h3>
-                      <Badge>{link.category}</Badge>
+                    <div className="flex items-center gap-3 mb-3">
+                      <Icon name="ExternalLink" size={22} className="text-primary flex-shrink-0" />
+                      <h3 className="text-xl font-bold text-foreground">{link.title}</h3>
+                      <Badge className="bg-primary/10 text-primary border border-primary/30">{link.category}</Badge>
                     </div>
-                    <p className="text-muted-foreground mb-3">{link.description}</p>
+                    <p className="text-muted-foreground mb-4 text-base leading-relaxed">{link.description}</p>
                     <a
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline text-sm"
+                      className="text-primary hover:underline text-sm font-semibold inline-flex items-center gap-1 story-link"
                     >
                       {link.url}
+                      <Icon name="ArrowUpRight" size={14} />
                     </a>
                   </div>
                 </div>
@@ -260,13 +263,13 @@ const search = debounce((query) => {
             ))}
           </TabsContent>
 
-          <TabsContent value="humor" className="space-y-4">
+          <TabsContent value="humor" className="space-y-5 animate-fade-in">
             {humor.map((joke, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="flex gap-4">
-                  <div className="text-4xl">{joke.emoji}</div>
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex gap-5">
+                  <div className="text-5xl flex-shrink-0">{joke.emoji}</div>
                   <div className="flex-1">
-                    <pre className="whitespace-pre-wrap font-sans text-foreground">{joke.text}</pre>
+                    <pre className="whitespace-pre-wrap font-sans text-foreground text-base leading-relaxed">{joke.text}</pre>
                   </div>
                 </div>
               </Card>
@@ -275,98 +278,98 @@ const search = debounce((query) => {
         </Tabs>
       </main>
 
-      <aside className="fixed right-0 top-0 bottom-0 w-80 bg-sidebar text-sidebar-foreground p-8 overflow-y-auto border-l border-sidebar-border">
-        <nav className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Меню</h2>
-            <p className="text-sidebar-foreground/70 text-sm">Навигация по разделам</p>
+      <aside className="hidden lg:block fixed right-0 top-0 bottom-0 w-80 bg-sidebar text-sidebar-foreground p-8 overflow-y-auto shadow-2xl">
+        <nav className="space-y-8">
+          <div className="pb-6 border-b border-sidebar-border">
+            <h2 className="text-3xl font-bold mb-2 text-sidebar-foreground">Меню</h2>
+            <p className="text-sidebar-foreground/70 text-sm font-semibold">Навигация по разделам</p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Button
               variant={activeSection === "code" ? "default" : "ghost"}
-              className="w-full justify-start gap-3"
+              className="w-full justify-start gap-3 h-12 text-base font-semibold transition-all hover:scale-105"
               onClick={() => setActiveSection("code")}
             >
-              <Icon name="Code2" size={18} />
+              <Icon name="Code2" size={20} />
               Код-сниппеты
             </Button>
             <Button
               variant={activeSection === "tips" ? "default" : "ghost"}
-              className="w-full justify-start gap-3"
+              className="w-full justify-start gap-3 h-12 text-base font-semibold transition-all hover:scale-105"
               onClick={() => setActiveSection("tips")}
             >
-              <Icon name="Lightbulb" size={18} />
+              <Icon name="Lightbulb" size={20} />
               Советы
             </Button>
             <Button
               variant={activeSection === "links" ? "default" : "ghost"}
-              className="w-full justify-start gap-3"
+              className="w-full justify-start gap-3 h-12 text-base font-semibold transition-all hover:scale-105"
               onClick={() => setActiveSection("links")}
             >
-              <Icon name="Link" size={18} />
+              <Icon name="Link" size={20} />
               Полезные ссылки
             </Button>
             <Button
               variant={activeSection === "humor" ? "default" : "ghost"}
-              className="w-full justify-start gap-3"
+              className="w-full justify-start gap-3 h-12 text-base font-semibold transition-all hover:scale-105"
               onClick={() => setActiveSection("humor")}
             >
-              <Icon name="Smile" size={18} />
+              <Icon name="Smile" size={20} />
               Юмор
             </Button>
           </div>
 
-          <div className="pt-6 border-t border-sidebar-border space-y-4">
+          <div className="pt-6 border-t border-sidebar-border space-y-6">
             <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Icon name="Github" size={18} />
+              <h3 className="font-bold mb-4 flex items-center gap-2 text-lg">
+                <Icon name="Github" size={20} />
                 GitHub
               </h3>
-              <Button variant="outline" className="w-full" size="sm">
-                <Icon name="Github" size={16} className="mr-2" />
+              <Button variant="outline" className="w-full h-11 font-semibold hover:bg-sidebar-accent">
+                <Icon name="Github" size={18} className="mr-2" />
                 Мой профиль
               </Button>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Icon name="Coffee" size={18} />
+              <h3 className="font-bold mb-4 flex items-center gap-2 text-lg">
+                <Icon name="Mail" size={20} />
                 Контакты
               </h3>
-              <div className="space-y-2 text-sm text-sidebar-foreground/70">
-                <div className="flex items-center gap-2">
-                  <Icon name="Mail" size={14} />
+              <div className="space-y-3 text-sm text-sidebar-foreground/80 font-semibold">
+                <div className="flex items-center gap-3 p-2 rounded hover:bg-sidebar-accent transition-colors">
+                  <Icon name="Mail" size={16} />
                   <span>dev@example.com</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Icon name="Globe" size={14} />
+                <div className="flex items-center gap-3 p-2 rounded hover:bg-sidebar-accent transition-colors">
+                  <Icon name="Globe" size={16} />
                   <span>myportfolio.dev</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-3 flex items-center gap-2">
-                <Icon name="Users" size={18} />
+              <h3 className="font-bold mb-4 flex items-center gap-2 text-lg">
+                <Icon name="Users" size={20} />
                 Соцсети
               </h3>
-              <div className="flex gap-2">
-                <Button variant="outline" size="icon">
-                  <Icon name="Twitter" size={16} />
+              <div className="flex gap-3">
+                <Button variant="outline" size="icon" className="h-11 w-11 hover:bg-sidebar-accent hover:scale-110 transition-all">
+                  <Icon name="Twitter" size={18} />
                 </Button>
-                <Button variant="outline" size="icon">
-                  <Icon name="Linkedin" size={16} />
+                <Button variant="outline" size="icon" className="h-11 w-11 hover:bg-sidebar-accent hover:scale-110 transition-all">
+                  <Icon name="Linkedin" size={18} />
                 </Button>
-                <Button variant="outline" size="icon">
-                  <Icon name="MessageCircle" size={16} />
+                <Button variant="outline" size="icon" className="h-11 w-11 hover:bg-sidebar-accent hover:scale-110 transition-all">
+                  <Icon name="MessageCircle" size={18} />
                 </Button>
               </div>
             </div>
           </div>
 
           <div className="pt-6 border-t border-sidebar-border">
-            <p className="text-xs text-sidebar-foreground/50 text-center">
+            <p className="text-xs text-sidebar-foreground/50 text-center font-semibold">
               © 2024 Tech Portfolio
             </p>
           </div>
