@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
 import { toast } from "sonner";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("code");
+  const [dbSnippets, setDbSnippets] = useState<any[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    language: '',
+    code: '',
+    tags: ''
+  });
 
   const codeSnippets = [
     {
@@ -159,126 +171,55 @@ const search = debounce((query) => {
     toast.success(`${title} скопирован!`);
   };
 
+  const fetchSnippets = async () => {
+    try {
+      const response = await fetch('https://functions.poehali.dev/a4b9c07f-2319-48e0-abaf-ad2c36b64a8f');
+      const data = await response.json();
+      setDbSnippets(data.snippets || []);
+    } catch (error) {
+      console.error('Error fetching snippets:', error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('https://functions.poehali.dev/a4b9c07f-2319-48e0-abaf-ad2c36b64a8f', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          language: formData.language,
+          code: formData.code,
+          tags: formData.tags.split(',').map(t => t.trim()).filter(t => t)
+        })
+      });
+      
+      if (response.ok) {
+        toast.success('Сниппет успешно создан!');
+        setIsDialogOpen(false);
+        setFormData({ title: '', language: '', code: '', tags: '' });
+        fetchSnippets();
+      } else {
+        toast.error('Ошибка при создании сниппета');
+      }
+    } catch (error) {
+      toast.error('Ошибка сети');
+    }
+  };
+
+  useEffect(() => {
+    fetchSnippets();
+  }, []);
+
+  const allSnippets = [...dbSnippets, ...codeSnippets];
+
   return (
     <div className="min-h-screen flex bg-background">
-      <main className="flex-1 p-6 lg:p-12 lg:pr-96">
-        <header className="mb-12 animate-fade-in">
-          <h1 className="text-5xl font-bold mb-3 text-foreground tracking-tight">TECH PORTFOLIO</h1>
-          <p className="text-muted-foreground text-xl font-semibold">PHP • JavaScript • CSS</p>
-        </header>
-
-        <Tabs defaultValue="code" className="w-full" onValueChange={setActiveSection}>
-          <TabsList className="mb-8 bg-card border border-border">
-            <TabsTrigger value="code" className="gap-2">
-              <Icon name="Code2" size={18} />
-              Код-сниппеты
-            </TabsTrigger>
-            <TabsTrigger value="tips" className="gap-2">
-              <Icon name="Lightbulb" size={18} />
-              Советы
-            </TabsTrigger>
-            <TabsTrigger value="links" className="gap-2">
-              <Icon name="Link" size={18} />
-              Ссылки
-            </TabsTrigger>
-            <TabsTrigger value="humor" className="gap-2">
-              <Icon name="Smile" size={18} />
-              Юмор
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="code" className="space-y-6 animate-fade-in">
-            {codeSnippets.map((snippet, index) => (
-              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3 text-foreground">{snippet.title}</h3>
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge variant="secondary" className="text-sm px-3 py-1">{snippet.language}</Badge>
-                      {snippet.tags.map((tag, i) => (
-                        <Badge key={i} variant="outline" className="text-sm px-3 py-1">{tag}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => copyToClipboard(snippet.code, snippet.title)}
-                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
-                  >
-                    <Icon name="Copy" size={16} />
-                    Copy
-                  </Button>
-                </div>
-                <div className="bg-secondary/10 border-2 border-secondary/20 rounded-lg p-5 overflow-x-auto">
-                  <pre className="text-sm">
-                    <code className="text-foreground">{snippet.code}</code>
-                  </pre>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="tips" className="space-y-5 animate-fade-in">
-            {tips.map((tip, index) => (
-              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
-                <div className="flex gap-5">
-                  <div className="flex-shrink-0">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
-                      <Icon name={tip.icon as any} size={28} className="text-primary" />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold mb-2 text-foreground">{tip.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed text-base">{tip.content}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="links" className="space-y-5 animate-fade-in">
-            {links.map((link, index) => (
-              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Icon name="ExternalLink" size={22} className="text-primary flex-shrink-0" />
-                      <h3 className="text-xl font-bold text-foreground">{link.title}</h3>
-                      <Badge className="bg-primary/10 text-primary border border-primary/30">{link.category}</Badge>
-                    </div>
-                    <p className="text-muted-foreground mb-4 text-base leading-relaxed">{link.description}</p>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline text-sm font-semibold inline-flex items-center gap-1 story-link"
-                    >
-                      {link.url}
-                      <Icon name="ArrowUpRight" size={14} />
-                    </a>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="humor" className="space-y-5 animate-fade-in">
-            {humor.map((joke, index) => (
-              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
-                <div className="flex gap-5">
-                  <div className="text-5xl flex-shrink-0">{joke.emoji}</div>
-                  <div className="flex-1">
-                    <pre className="whitespace-pre-wrap font-sans text-foreground text-base leading-relaxed">{joke.text}</pre>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      <aside className="hidden lg:block fixed right-0 top-0 bottom-0 w-80 bg-sidebar text-sidebar-foreground p-8 overflow-y-auto shadow-2xl">
+      <aside className="hidden lg:block fixed left-0 top-0 bottom-0 w-80 bg-sidebar text-sidebar-foreground p-8 overflow-y-auto shadow-2xl">
         <nav className="space-y-8">
           <div className="pb-6 border-b border-sidebar-border">
             <h2 className="text-3xl font-bold mb-2 text-sidebar-foreground">Меню</h2>
@@ -375,6 +316,195 @@ const search = debounce((query) => {
           </div>
         </nav>
       </aside>
+
+      <main className="flex-1 p-6 lg:p-12 lg:pl-96">
+        <header className="mb-12 animate-fade-in">
+          <h1 className="text-5xl font-bold mb-3 text-foreground tracking-tight">TECH PORTFOLIO</h1>
+          <p className="text-muted-foreground text-xl font-semibold">PHP • JavaScript • CSS</p>
+        </header>
+
+        <Tabs defaultValue="code" className="w-full" onValueChange={setActiveSection}>
+          <TabsList className="mb-8 bg-card border border-border">
+            <TabsTrigger value="code" className="gap-2">
+              <Icon name="Code2" size={18} />
+              Код-сниппеты
+            </TabsTrigger>
+            <TabsTrigger value="tips" className="gap-2">
+              <Icon name="Lightbulb" size={18} />
+              Советы
+            </TabsTrigger>
+            <TabsTrigger value="links" className="gap-2">
+              <Icon name="Link" size={18} />
+              Ссылки
+            </TabsTrigger>
+            <TabsTrigger value="humor" className="gap-2">
+              <Icon name="Smile" size={18} />
+              Юмор
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="code" className="space-y-6 animate-fade-in">
+            <div className="mb-6">
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="gap-2">
+                    <Icon name="Plus" size={18} />
+                    Добавить сниппет
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold">Создать новый сниппет</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title" className="text-base font-semibold">Название</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        placeholder="PHP: Простой роутер"
+                        required
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="language" className="text-base font-semibold">Язык программирования</Label>
+                      <Input
+                        id="language"
+                        value={formData.language}
+                        onChange={(e) => setFormData({...formData, language: e.target.value})}
+                        placeholder="PHP, JavaScript, CSS, Python"
+                        required
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="code" className="text-base font-semibold">Код</Label>
+                      <Textarea
+                        id="code"
+                        value={formData.code}
+                        onChange={(e) => setFormData({...formData, code: e.target.value})}
+                        placeholder="Введите код..."
+                        required
+                        className="min-h-[300px] font-mono text-sm"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="tags" className="text-base font-semibold">Теги (через запятую)</Label>
+                      <Input
+                        id="tags"
+                        value={formData.tags}
+                        onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                        placeholder="routing, clean-code, performance"
+                        className="h-11"
+                      />
+                    </div>
+                    <div className="flex gap-3 pt-4">
+                      <Button type="submit" className="flex-1 h-11">
+                        <Icon name="Save" size={18} className="mr-2" />
+                        Сохранить
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 h-11">
+                        Отмена
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div>
+            
+            {allSnippets.map((snippet, index) => (
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-3 text-foreground">{snippet.title}</h3>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="secondary" className="text-sm px-3 py-1">{snippet.language}</Badge>
+                      {snippet.tags.map((tag, i) => (
+                        <Badge key={i} variant="outline" className="text-sm px-3 py-1">{tag}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyToClipboard(snippet.code, snippet.title)}
+                    className="gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all"
+                  >
+                    <Icon name="Copy" size={16} />
+                    Copy
+                  </Button>
+                </div>
+                <div className="bg-secondary/10 border-2 border-secondary/20 rounded-lg p-5 overflow-x-auto">
+                  <pre className="text-sm">
+                    <code className="text-foreground">{snippet.code}</code>
+                  </pre>
+                </div>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="tips" className="space-y-5 animate-fade-in">
+            {tips.map((tip, index) => (
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                      <Icon name={tip.icon as any} size={28} className="text-primary" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-2 text-foreground">{tip.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-base">{tip.content}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="links" className="space-y-5 animate-fade-in">
+            {links.map((link, index) => (
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Icon name="ExternalLink" size={22} className="text-primary flex-shrink-0" />
+                      <h3 className="text-xl font-bold text-foreground">{link.title}</h3>
+                      <Badge className="bg-primary/10 text-primary border border-primary/30">{link.category}</Badge>
+                    </div>
+                    <p className="text-muted-foreground mb-4 text-base leading-relaxed">{link.description}</p>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline text-sm font-semibold inline-flex items-center gap-1 story-link"
+                    >
+                      {link.url}
+                      <Icon name="ArrowUpRight" size={14} />
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="humor" className="space-y-5 animate-fade-in">
+            {humor.map((joke, index) => (
+              <Card key={index} className="p-6 hover:shadow-xl transition-all duration-300 hover-scale border-2 border-transparent hover:border-primary/20">
+                <div className="flex gap-5">
+                  <div className="text-5xl flex-shrink-0">{joke.emoji}</div>
+                  <div className="flex-1">
+                    <pre className="whitespace-pre-wrap font-sans text-foreground text-base leading-relaxed">{joke.text}</pre>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </TabsContent>
+        </Tabs>
+      </main>
+
+
     </div>
   );
 };
